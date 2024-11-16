@@ -16,6 +16,7 @@ contract TodoRoles {
         require(admins[msg.sender], "Not an admin");
         _;
     }
+    //modifier function
     modifier onlyUser() {
         require(users[msg.sender] || admins[msg.sender], "Not a user");
         _;
