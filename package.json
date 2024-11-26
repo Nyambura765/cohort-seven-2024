@@ -63,6 +63,7 @@
     "ethereum-cryptography": "^1.2.0",
     "ethereumjs-abi": "^0.6.8",
     "ethereumjs-util": "^6.2.1",
+    "ethers": "^6.13.4",
     "ethjs-util": "^0.1.6",
     "evp_bytestokey": "^1.0.3",
     "fill-range": "^7.1.1",
@@ -187,5 +188,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.",
+  "directories": {
+    "test": "test"
+  }
 }
