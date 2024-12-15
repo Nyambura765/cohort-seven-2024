@@ -3,82 +3,88 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import bookStore from "./ABI/Bookstore.json" assert { type: 'json' };
 
-
+// Function to create a contract instance
 const createContractInstanceOnEthereum = (contractAddress, contractAbi) => {
     const alchemyApiKey = process.env.ALCHEMY_API_KEY_SEPOLIA;
     const provider = new ethers.AlchemyProvider('sepolia', alchemyApiKey);
-    console.log("provider==>", provider)
+    console.log("Provider initialized:", provider);
 
     const privateKey = process.env.WALLET_PRIVATE_KEY;
     const wallet = new Wallet(privateKey, provider); 
+    console.log("Wallet connected:", wallet.address);
 
     const contract = new ethers.Contract(contractAddress, contractAbi, wallet);
-    console.log("contract==>", contract)
+    console.log("Contract instance created:", contract.address);
 
-    return contract
-}
+    return contract;
+};
 
-const contractAddress = '0x0F9696E62ce7BF9fDCBa39FD3ad1cAE821E2458a' 
-const contractOnETH =  createContractInstanceOnEthereum(contractAddress, bookStore.abi)
+const contractAddress = '0x346311db922eac24426c96c76ae98126eb835cab';
+const contractOnETH = createContractInstanceOnEthereum(contractAddress, bookStore.abi);
 
-
-const addBookToContract = async(bookId, title, author, price, stock) => {
+// Function to add a book to the contract
+const addBookToContract = async (bookId, title, author, price, stock) => {
     try {
-        const txResponse = await contractOnETH.addBook(bookId, title, author, price, stock)
-        console.log(txResponse.hash)
-        console.log(`https://sepolia.etherscan.io/tx/${txResponse.hash}`)
-        
+        console.log("Adding book with details:", { bookId, title, author, price, stock });
+        const txResponse = await contractOnETH.addBook(bookId, title, author, price, stock);
+        console.log("Transaction submitted. Hash:", txResponse.hash);
+        console.log(`View transaction on Etherscan: https://sepolia.etherscan.io/tx/${txResponse.hash}`);
     } catch (error) {
-        console.error(error) 
-        throw error
+        console.error("Error adding book to contract:", error);
+        throw error;
     }
-}
-
+};
 
 const bookDetails = {
-    bookId: 5,
+    bookId: 8,
     title: "Harry Potter",
     author: "J.K. Rowling",
     price: 10,
     stock: 100
-}
+};
 
-
-const _bookId = 1
+// Function to retrieve book details from the contract
 const getBook = async (_bookId) => {
-    try{
-        const books = await contractOnETH.getBooks(_bookId)
-
-        console.log(books[2])
-    } catch (error) {
-        console.error(error)
-    }
-}
-
-const buyBookFromContract = async (bookId, quanity) => {
     try {
-
-        const book = await contractOnETH.getBooks(_bookId)
-        // get the total price of the book
-        const price = ethers.parseEther(book[2]).toString()
-        const totalPrice = price * quanity
-
-        // buying book
-        const txResponse = await contractOnETH.buyBook(bookId, quanity, { value: totalPrice})
-        console.log(txResponse.hash)
-        console.log(`https://sepolia.etherscan.io/tx/${txResponse.hash}`)
-        } catch (error) {
-            console.error(error)
+        console.log("Fetching book details for ID:", _bookId);
+        const books = await contractOnETH.getBooks(_bookId);
+        console.log("Book details retrieved:", books);
+    } catch (error) {
+        console.error("Error fetching book details:", error);
     }
-        
-} 
+};
 
+// Function to buy a book from the contract
+const buyBookFromContract = async (bookId, quantity) => {
+    try {
+        console.log(`Buying book with ID: ${bookId}, Quantity: ${quantity}`);
+        const book = await contractOnETH.getBooks(bookId);
+        console.log("Book details for purchase:", book);
 
+        // Calculate the total price
+        const price = ethers.parseEther(book[2]).toString();
+        const totalPrice = price * quantity;
+        console.log(`Total price calculated: ${totalPrice} wei`);
 
+        // Sending the transaction
+        const txResponse = await contractOnETH.buyBook(bookId, quantity, { value: totalPrice });
+        console.log("Transaction submitted. Hash:", txResponse.hash);
+        console.log(`View transaction on Etherscan: https://sepolia.etherscan.io/tx/${txResponse.hash}`);
+    } catch (error) {
+        console.error("Error buying book from contract:", error);
+    }
+};
+
+// Main execution flow
 (async () => {
-    await addBookToContract(bookDetails.bookId, bookDetails.title, bookDetails.author, bookDetails.price, bookDetails.stock)
-    await getBook(_bookId)
-    await buyBookFromContract(_bookId, 1)
-})()
+    console.log("Starting contract operations...");
 
+    await addBookToContract(bookDetails.bookId, bookDetails.title, bookDetails.author, bookDetails.price, bookDetails.stock);
 
+    const _bookId = 1;
+    await getBook(_bookId);
+
+    await buyBookFromContract(_bookId, 1);
+
+    console.log("Contract operations complete.");
+})();
