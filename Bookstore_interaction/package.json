@@ -11,7 +11,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@wagmi/core": "^2.15.0",
     "dotenv": "^16.4.5",
-    "ethers": "^6.13.4"
+    "ethers": "^6.13.4",
+    "viem": "^2.21.51",
+    "wagmi": "^2.13.0"
   }
 }

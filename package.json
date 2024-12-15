@@ -7,6 +7,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
+    "@wagmi/core": "^2.15.0",
     "adm-zip": "^0.4.16",
     "agent-base": "^6.0.2",
     "aggregate-error": "^3.1.0",
@@ -171,6 +172,8 @@
     "unpipe": "^1.0.0",
     "util-deprecate": "^1.0.2",
     "uuid": "^8.3.2",
+    "viem": "^2.21.51",
+    "wagmi": "^2.13.0",
     "widest-line": "^3.1.0",
     "workerpool": "^6.5.1",
     "wrap-ansi": "^7.0.0",
